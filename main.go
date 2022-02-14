@@ -11,7 +11,9 @@ var (
 )
 
 func main() {
-	seedConfig, nodeKey := lightsentry.InitConfigs()
-  sw := lightsentry.StartSeedNode(seedConfig, nodeKey)
-  sw.Wait() // block
+  seedConfig, nodeKey := lightsentry.InitConfigs()
+  sentryNode := lightsentry.NewSentryNode(seedConfig, nodeKey)
+  sentryNode.DialPersistentPeers()
+  sentryNode.AddPrivatePeerIDs()
+  sentryNode.Switch.Wait() // block
 }
