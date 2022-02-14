@@ -1,9 +1,12 @@
 # Lightsentry
 
-## Lightsentry is a fork of [TinySeed](https://github.com/notional-labs/tinyseed), which is a fork of Binary Holding's Tenderseed, which is a fork of Polychain's Tenderseed
+## Lightsentry is a tool that uses Tendermint's implementation to run a sentry node without the need of the data folder.
 
-This tool runs a seed node for multiple tendermint based blockchain (i.e. Terra, Cosmos, Akash, etc, thanks to TinySeed)
-, crawls the network and expose the list of peers with the geolocation.
+As a sentry node is *in fine* just a node isolating the validator behind it, there is actually no need to run all the other process a full node runs (ie. all the reactors like mempool, blockchain, consensus, tx indexer, state sync etc etc)
+
+This implementation only runs the pex reactor, address book and the switch to correctly discover peers and have a nice connectivity for the private peers linked to it.
+
+All this with 0 data!
 
 ### Configuration
 
@@ -16,11 +19,10 @@ go install .
 ./lightsentry
 ```
 
-A file `$HOME/.lightsentry/config/config.toml` will be generated if it doesn't exist yet, with some default parameters,
+A file `$HOME/.lightsentry/config.toml` will be generated if it doesn't exist yet, with some default parameters,
 and the program will exit.
 
-You need to fill the `seeds` and `chain_id` for every chain and start it again. It may take few minutes/hours before
-discovering peers, depending on the network.
+You need to fill the `seeds` and `chain_id` and other params and run it again.
 
 ## License
 
