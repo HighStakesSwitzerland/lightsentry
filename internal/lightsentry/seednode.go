@@ -20,6 +20,7 @@ var (
 
 type SentryNode struct {
   p2p.Switch
+  pexReactor           *pex.Reactor
   config               *P2PConfig
   persistentPeersAddrs []*p2p.NetAddress
 }
@@ -61,6 +62,9 @@ func NewSentryNode(config *P2PConfig, nodeKey *p2p.NodeKey) *SentryNode {
   config.SeedMode = false
   config.PexReactor = true
   config.AddrBookStrict = false
+  config.MaxNumOutboundPeers = 1000
+  config.MaxNumInboundPeers = 1000
+  config.PersistentPeersMaxDialPeriod = 5 * time.Minute
 
   transport := p2p.NewMultiplexTransport(nodeInfo, *nodeKey, p2p.MConnConfig(&config.P2PConfig))
   if err := transport.Listen(*addr); err != nil {
@@ -74,10 +78,9 @@ func NewSentryNode(config *P2PConfig, nodeKey *p2p.NodeKey) *SentryNode {
   pexReactor := pex.NewReactor(addrBook, &pex.ReactorConfig{
     SeedMode:                     config.SeedMode,
     SeedDisconnectWaitPeriod:     28 * time.Hour,
-    PersistentPeersMaxDialPeriod: 5 * time.Minute,
+    PersistentPeersMaxDialPeriod: config.PersistentPeersMaxDialPeriod,
     Seeds:                        tmstrings.SplitAndTrim(config.Seeds, ",", " "),
   })
-
   sw := p2p.NewSwitch(&config.P2PConfig, transport)
 
   var configuredLogger log.Logger
@@ -96,7 +99,7 @@ func NewSentryNode(config *P2PConfig, nodeKey *p2p.NodeKey) *SentryNode {
 
   sw.SetLogger(configuredLogger.With("module", "switch"))
   addrBook.SetLogger(configuredLogger.With("module", "addrbook", "chain", config.ChainId))
-  pexReactor.SetLogger(configuredLogger.With("module", "pex"))
+  //pexReactor.SetLogger(configuredLogger.With("module", "pex"))
 
   sw.SetNodeKey(nodeKey)
   sw.SetAddrBook(addrBook)
@@ -116,6 +119,7 @@ func NewSentryNode(config *P2PConfig, nodeKey *p2p.NodeKey) *SentryNode {
 
   return &SentryNode{
     Switch:               *sw,
+    pexReactor:           pexReactor,
     config:               config,
     persistentPeersAddrs: make([]*p2p.NetAddress, 0),
   }
@@ -129,11 +133,9 @@ func (sn *SentryNode) DialPersistentPeers() {
     panic(err)
   }
 
-  for _, netAddr := range sn.persistentPeersAddrs {
-    err := sn.Switch.DialPeerWithAddress(netAddr)
-    if err != nil {
-      logger.Error("dial persistent peer", err)
-    }
+  err = sn.Switch.DialPeersAsync(tmstrings.SplitAndTrim(sn.config.PersistentPeers, ",", " "))
+  if err != nil {
+    logger.Error("dial persistent peer failed", err)
   }
 }
 
