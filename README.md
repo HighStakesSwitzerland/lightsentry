@@ -1,5 +1,7 @@
 # Lightsentry
 
+This project is **NOT** functional, still thinking about it. And actually thinking it may no be achievable :/
+
 ## Lightsentry is a tool that uses Tendermint's implementation to run a sentry node without the need of the data folder.
 
 As a sentry node is *in fine* just a node isolating the validator behind it, there is actually no need to run all the other process a full node runs (ie. all the reactors like mempool, blockchain, consensus, tx indexer, state sync etc etc)
