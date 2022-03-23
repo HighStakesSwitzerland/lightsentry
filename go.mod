@@ -1,6 +1,6 @@
-go 1.17
+go 1.18
 
-module github.com/terran-stakers/lightsentry
+module github.com/highstakesswitzerland/lightsentry
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0

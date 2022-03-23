@@ -13,7 +13,7 @@ All this with 0 data!
 ### Configuration
 
 ```bash
-git clone https://github.com/Terran-Stakers/lightsentry
+git clone https://github.com/HighStakesSwitzerland/lightsentry
 go mod tidy
 npm install
 npm run build

@@ -1,9 +1,9 @@
 package main
 
 import (
-  "github.com/tendermint/tendermint/libs/log"
-  "github.com/terran-stakers/lightsentry/internal/lightsentry"
-  "os"
+	"github.com/highstakesswitzerland/lightsentry/internal/lightsentry"
+	"github.com/tendermint/tendermint/libs/log"
+	"os"
 )
 
 var (
@@ -11,9 +11,9 @@ var (
 )
 
 func main() {
-  seedConfig, nodeKey := lightsentry.InitConfigs()
-  sentryNode := lightsentry.NewSentryNode(seedConfig, nodeKey)
-  sentryNode.DialPersistentPeers()
-  sentryNode.AddPrivatePeerIDs()
-  sentryNode.Switch.Wait() // block
+	seedConfig, nodeKey := lightsentry.InitConfigs()
+	sentryNode := lightsentry.NewSentryNode(seedConfig, nodeKey)
+	sentryNode.DialPersistentPeers()
+	sentryNode.AddPrivatePeerIDs()
+	sentryNode.Switch.Wait() // block
 }
